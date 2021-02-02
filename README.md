@@ -14,4 +14,32 @@ brew install --cask chromedriver
 
 it will install to that location.
 
+
+## Installation
+
+First you need a python environment and to install the `package-deps.txt`.
+
+```
+python3 -m venv venv
+. venv/bin/activate
+pip install -r package-deps.txt
+```
+
+If your chromedriver is not installed in `/usr/local/bin/chromedriver`
+you will want to create `.env` file and add the location there
+
+`.env`
+```
+CHROME_DRIVER_PATH=<path to chrome driver>
+```
+
+## Running
+
+You can look at the `main.py` for examples of how to use the modules.
+Or just run `main.py`.
+
+```
+python main.py
+```
+
 **Note** The docker stuff does not work yet.
