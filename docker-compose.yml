@@ -1,0 +1,5 @@
+version: '3.7'
+services:
+  product-finder:
+    build: .
+    container_name: 'product-finder'
