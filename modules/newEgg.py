@@ -19,7 +19,7 @@ load_dotenv(verbose=True)
 CHROME_DRIVER_PATH = os.getenv('CHROME_DRIVER_PATH', '/usr/local/bin/chromedriver')
 
 class NewEggSearch:
-    """ Best Buy """
+    """ New Egg """
 
     found_items = []
 
@@ -27,6 +27,7 @@ class NewEggSearch:
         """ """
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("headless")
 
         self.search_url = search_url
         self.driver = webdriver.Chrome(CHROME_DRIVER_PATH, chrome_options=chrome_options)
@@ -61,9 +62,16 @@ class NewEggSearch:
                 try:
                     buy_button_text = item.find_element_by_class_name("item-button-area").text.strip()
                     if "add to cart" not in buy_button_text.lower():
-                       continue 
+                       continue
                 except:
                     continue
+
+            # get link
+            try:
+                anchor_tag = item.find_element_by_class_name('item-title')
+                link = anchor_tag.get_attribute("href")
+            except:
+                continue
 
             # check the price of the card
             try:
@@ -73,19 +81,14 @@ class NewEggSearch:
                 str_price = f"{price_dollars}{price_cents}"
                 computed_price = float(str_price)
                 if computed_price > (self.target_price * (1 + self.wiggle_room)):
-                    print(f"too expensive: {computed_price}")
+                    print(f"too expensive: {computed_price} ({link})")
                     continue
             except Exception as e:
                 print(f'EXCEPTION: {e}')
                 continue
 
-            # get link
-            try:
-                anchor_tag = item.find_element_by_class_name('item-title')
-                link = anchor_tag.get_attribute("href")
-                self.found_items.append((link, computed_price))
-            except:
-                continue
+            # add item
+            self.found_items.append((link, computed_price))
 
     def search(self):
         """  """
@@ -103,6 +106,6 @@ class NewEggSearch:
         pass
 
     def close(self):
-        """ """ 
+        """ """
         self.driver.close()
         self.driver.quit()

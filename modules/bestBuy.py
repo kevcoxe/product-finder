@@ -24,6 +24,7 @@ class BestBuySearch:
         """ """
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("headless")
 
         self.search_url = search_url
         self.driver = webdriver.Chrome(CHROME_DRIVER_PATH, chrome_options=chrome_options)
@@ -46,6 +47,13 @@ class BestBuySearch:
             except:
                 continue
 
+            # get link
+            try:
+                anchor_tag = item.find_element_by_class_name('image-link')
+                link = anchor_tag.get_attribute("href")
+            except:
+                continue
+
             # check the price of the card
             try:
                 price_div = item.find_element_by_class_name("priceView-customer-price")
@@ -53,18 +61,13 @@ class BestBuySearch:
                 price = price_element.text.strip()[1:].replace(',', '')
                 computed_price = float(price)
                 if computed_price > (self.target_price * (1 + self.wiggle_room)):
-                    print(f"too expensive: {computed_price}")
+                    print(f"too expensive: {computed_price} ({link})")
                     continue
             except:
                 continue
 
-            # get link
-            try:
-                anchor_tag = item.find_element_by_class_name('image-link')
-                link = anchor_tag.get_attribute("href")
-                self.found_items.append((link, computed_price))
-            except:
-                continue
+            # add item
+            self.found_items.append((link, computed_price))
 
     def search(self):
         """  """
@@ -82,6 +85,6 @@ class BestBuySearch:
         pass
 
     def close(self):
-        """ """ 
+        """ """
         self.driver.close()
         self.driver.quit()

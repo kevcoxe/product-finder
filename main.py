@@ -194,7 +194,7 @@ def run_console():
             )
             searcher.search()
             searcher.close()
-        
+
         elif "newegg.com" in item['url']:
             new_egg_search = NewEggSearch(
                 search_url=item['url'],
@@ -209,3 +209,4 @@ if __name__ == "__main__":
     run_best_buy()
     run_newegg()
     run_console()
+
